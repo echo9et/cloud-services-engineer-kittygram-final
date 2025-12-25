@@ -3,7 +3,7 @@ name: Kittygram Final Workflow
 on:
   push:
     branches:
-      - dev
+      - main
 env:
   SERVICE: kittygram
   POSTGRES_USER: postgres
