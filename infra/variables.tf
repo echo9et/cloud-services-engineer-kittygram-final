@@ -3,6 +3,11 @@ variable "cloud_id" {
   type        = string
 }
 
+variable "token" {
+  description = "Token"
+  type        = string
+}
+
 variable "folder_id" {
   description = "Folder ID"
   type        = string
@@ -20,7 +25,7 @@ variable "vm_1_name" {
 
 variable "vm_1_user" {
   type    = string
-  default = "user"
+  default = "ubuntu"
 }
 
 variable "platform_id" {
@@ -31,7 +36,7 @@ variable "platform_id" {
 variable "zone" {
   description = "Zone"
   type        = string
-  default     = "ru-central1-a"
+  default     = "ru-central1-b"
 }
 
 variable "image_family" {
@@ -85,8 +90,6 @@ variable "net_cidr" {
   }))
 
   default = [
-    { name = "infra-subnet-a", zone = "ru-central1-a", prefix = "10.129.1.0/24" },
     { name = "infra-subnet-b", zone = "ru-central1-b", prefix = "10.130.1.0/24" },
-    { name = "infra-subnet-d", zone = "ru-central1-d", prefix = "10.131.1.0/24" },
   ]
 }

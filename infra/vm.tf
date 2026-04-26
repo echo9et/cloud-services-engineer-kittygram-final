@@ -22,16 +22,14 @@ resource "yandex_compute_instance" "vm_1" {
   }
 
   network_interface {
-    subnet_id          = yandex_vpc_subnet.infra_subnet[0].id
+    subnet_id          = yandex_vpc_subnet.infra_subnet.id
     nat                = var.nat
     security_group_ids = [yandex_vpc_security_group.infra_sg.id]
   }
 
   metadata = {
     serial-port-enable = "1"
-    user-data = templatefile("${path.module}/init/vm-install.yml", {
-      SSH_KEY  = var.ssh_key
-      USERNAME = var.vm_1_user
-    })
+    ssh-keys = "${var.vm_1_user}:${var.ssh_key}"
+    "user-data" = file("${path.module}/cloud-init.yaml")
   }
 }

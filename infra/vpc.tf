@@ -3,11 +3,10 @@ resource "yandex_vpc_network" "infra_network" {
 }
 
 resource "yandex_vpc_subnet" "infra_subnet" {
+  name           = var.net_cidr[0].name
+  zone           = var.net_cidr[0].zone    
+  v4_cidr_blocks = [var.net_cidr[0].prefix]
   network_id     = yandex_vpc_network.infra_network.id
-  count          = length(var.net_cidr)
-  name           = var.net_cidr[count.index].name
-  zone           = var.net_cidr[count.index].zone
-  v4_cidr_blocks = [var.net_cidr[count.index].prefix]
 }
 
 resource "yandex_vpc_security_group" "infra_sg" {
