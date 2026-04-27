@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pg_data:/usr/local/share/postgres
+      - pg_data:/var/lib/postgresql/data/
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -50,8 +50,5 @@ services:
 
 volumes:
   static:
-    name: static
   media:
-    name: media
   pg_data:
-    name: pg_data
