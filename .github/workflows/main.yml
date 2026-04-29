@@ -123,6 +123,9 @@ jobs:
       needs: [apply_infra_terraform]
 
       steps:
+          - name: Checkout repo
+            uses: actions/checkout@v6
+            
           - name: Copy docker-compose.production.yml to server
             uses: appleboy/scp-action@master
             with:
