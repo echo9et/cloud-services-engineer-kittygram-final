@@ -85,6 +85,4 @@ jobs:
         run: |
           echo "vm_ip=$(terraform output -raw vm_public_ip 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "vm_username=$(terraform output -raw vm_username 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
-          echo $vm_ip
-          echo $vm_username
       

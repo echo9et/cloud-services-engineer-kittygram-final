@@ -109,6 +109,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.SERVICE }}_gateway:latest
 
+# Будем использовать workflow terraform
   apply_infra_terraform:
     name: up infrastructure
     uses: ./.github/workflows/terraform.yml
