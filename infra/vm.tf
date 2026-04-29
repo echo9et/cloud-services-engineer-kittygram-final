@@ -29,7 +29,9 @@ resource "yandex_compute_instance" "vm_1" {
 
   metadata = {
     serial-port-enable = "1"
-    ssh-keys = "${var.vm_1_user}:${var.ssh_key}"
-    "user-data" = file("${path.module}/cloud-init.yaml")
+    user-data = templatefile("${path.module}/cloud-init.yaml", {
+      vm_user = var.vm_user
+      ssh_key = var.ssh_key
+    })
   }
 }

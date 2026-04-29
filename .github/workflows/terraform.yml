@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'Select the Terraform action'
+        description: 'Terraform action'
         type: choice
         required: true
         default: 'plan'
@@ -13,10 +13,29 @@ on:
           - apply
           - destroy
 
+  workflow_call:     
+    inputs:
+      action:
+        description: 'Terraform action'
+        type: string
+        required: true
+        default: 'apply'
+    outputs:
+      vm_ip:
+        description: 'Public IP of the VM'
+        value: ${{ jobs.terraform.outputs.vm_ip }}
+      vm_username:
+        description: 'Username for VM SSH'
+        value: ${{ jobs.terraform.outputs.vm_username }}
+
+
+
 jobs:
   terraform:
     runs-on: ubuntu-latest
-
+    outputs:
+      vm_ip: ${{ steps.get_outputs.outputs.vm_ip }}
+      vm_username: ${{ steps.get_outputs.outputs.vm_username }}
     env:
       TF_VAR_token: ${{ secrets.YC_IAM_TOKEN }}
       TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
@@ -35,7 +54,10 @@ jobs:
             
       - name: Terraform Init
         working-directory: ./infra
-        run: terraform init -input=false
+        run: |
+          terraform init -input=false -reconfigure \
+          -backend-config="access_key=${AWS_ACCESS_KEY_ID}" \
+          -backend-config="secret_key=${AWS_SECRET_ACCESS_KEY}"
       
       - name: Terraform Validate
         working-directory: ./infra
@@ -43,19 +65,26 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./infra
-        if: github.event.inputs.action == 'plan' || github.event.inputs.action == 'apply'
-        run: |
-          terraform init -input=false -reconfigure \
-          -backend-config="access_key=${AWS_ACCESS_KEY_ID}" \
-          -backend-config="secret_key=${AWS_SECRET_ACCESS_KEY}"
+        if: inputs.action == 'plan' || inputs.action == 'apply'
+        run: terraform plan -input=false
       
       - name: Terraform Apply
         working-directory: ./infra
-        if: github.event.inputs.action == 'apply'
+        if: inputs.action == 'apply'
         run: terraform apply -auto-approve -input=false
       
       - name: Terraform Destroy
         working-directory: ./infra
-        if: github.event.inputs.action == 'destroy'
-        run: terraform destroy -input=false -auto-approve
+        if: inputs.action == 'destroy'
+        run: terraform destroy -auto-approve -input=false
+
+      - name: Get outputs
+        id: get_outputs
+        if: inputs.action == 'apply'
+        working-directory: ./infra
+        run: |
+          echo "vm_ip=$(terraform output -raw vm_public_ip 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "vm_username=$(terraform output -raw vm_username 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo $vm_ip
+          echo $vm_username
       

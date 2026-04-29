@@ -10,13 +10,12 @@ packages:
   - git
 
 users:
-  - default
   - name: ${vm_user}
     groups: [sudo]
     shell: /bin/bash
     sudo: "ALL=(ALL) NOPASSWD:ALL"
     ssh_authorized_keys:
-      - ${ssh_public_key}
+      - ${ssh_key} 
 
 runcmd:
   - install -m 0755 -d /etc/apt/keyrings
