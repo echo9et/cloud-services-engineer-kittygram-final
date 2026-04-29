@@ -32,12 +32,7 @@ jobs:
       
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
-      
-      - name: Write authorized_key.json
-        working-directory: ./infra
-        run: |
-          echo "${{ secrets.YC_IAM_TOKEN }}" | base64 -d > authorized_key.json
-      
+            
       - name: Terraform Init
         working-directory: ./infra
         run: terraform init -input=false
@@ -49,12 +44,15 @@ jobs:
       - name: Terraform Plan
         working-directory: ./infra
         if: github.event.inputs.action == 'plan' || github.event.inputs.action == 'apply'
-        run: terraform plan -input=false -out=plan.tfplan
+        run: |
+          terraform init -input=false -reconfigure \
+          -backend-config="access_key=${AWS_ACCESS_KEY_ID}" \
+          -backend-config="secret_key=${AWS_SECRET_ACCESS_KEY}"
       
       - name: Terraform Apply
         working-directory: ./infra
         if: github.event.inputs.action == 'apply'
-        run: terraform apply -input=false -auto-approve plan.tfplan
+        run: terraform apply -auto-approve -input=false
       
       - name: Terraform Destroy
         working-directory: ./infra
