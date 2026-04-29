@@ -18,14 +18,14 @@ variable "ssh_key" {
   type        = string
 }
 
-variable "vm_1_name" {
+variable "vm_name" {
   type    = string
   default = "vm-kittygram"
 }
 
-variable "vm_1_user" {
+variable "vm_user" {
   type    = string
-  default = "ubuntu"
+  default = "user"
 }
 
 variable "platform_id" {

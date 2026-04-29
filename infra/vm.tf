@@ -3,8 +3,8 @@ resource "yandex_compute_image" "ubuntu_image" {
 }
 
 resource "yandex_compute_instance" "vm_1" {
-  name        = var.vm_1_name
-  hostname    = var.vm_1_name
+  name        = var.vm_name
+  hostname    = var.vm_name
   zone        = var.zone
   platform_id = var.platform_id
 
